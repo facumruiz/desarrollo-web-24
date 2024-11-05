@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .company, .contact, .country {
+            display: inline-block;
+            width: 30%;
+            padding: 10px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        /* Centrar el contenedor del botón */
+        .button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Control</h1>
+
+    <div>
+        <div class="company" id="dato1">N/A</div>
+        <div class="contact" id="dato2">N/A</div>
+        <div class="country" id="dato3">N/A</div>
+    </div>
+
+    <!-- Contenedor para el botón -->
+    <div class="button-container">
+        <button id="bt_cargar" class="button">ACTUALIZAR</button>
+    </div>
+
+
+    <script src="./script.js"></script>
+</body>
+</html>
