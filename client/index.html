@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Estilo para la tabla */
+        table {
+            width: 60%;
+            margin: 0 auto;
+            border-collapse: collapse;
+            margin-top: 30px;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        /* Estilo para los botones dentro de la tabla */
+        .button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1>Control</h1>
+
+    <!-- Tabla de datos con botones dentro -->
+    <table>
+        <thead>
+            <tr>
+                <th>Temperatura</th>
+                <th>Voltaje</th>
+                <th>Mediciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td id="dato1">N/A</td>
+                <td id="dato2">N/A</td>
+                <td id="dato3">N/A</td>
+            </tr>
+            <tr>
+                <td><button id="bt_temp" class="button">Obtener Temperatura</button></td>
+                <td><button id="bt_volt" class="button">Obtener Voltaje</button></td>
+                <td><button id="bt_corri" class="button">Obtener Corriente</button></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script src="./script.js"></script>
+
+</body>
+</html>
