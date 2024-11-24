@@ -4,7 +4,7 @@ const medicionesButton = document.getElementById("bt_corri");
 
 // Función para obtener la temperatura
 function obtener_temperatura() {
-    fetch('http://localhost:8000/temp')
+    fetch('http://localhost:8000/ultima-temperatura')
         .then(res => {
             if (!res.ok) {
                 throw new Error('Error en la solicitud');
@@ -22,7 +22,7 @@ function obtener_temperatura() {
 
 // Función para obtener el voltaje
 function obtener_voltaje() {
-    fetch('http://localhost:8000/volt')
+    fetch('http://localhost:8000/ultima-tension')
         .then(res => {
             if (!res.ok) {
                 throw new Error('Error en la solicitud');
@@ -40,7 +40,7 @@ function obtener_voltaje() {
 
 // Función para obtener las corriente
 function obtener_corriente() {
-    fetch('http://localhost:8000/corri')
+    fetch('http://localhost:8000/ultima-corriente')
         .then(res => {
             if (!res.ok) {
                 throw new Error('Error en la solicitud');
