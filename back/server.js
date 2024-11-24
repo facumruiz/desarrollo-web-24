@@ -1,112 +1,102 @@
-
+require('dotenv').config();
 const express = require('express');
-
+const cors = require('cors');
+const { MongoClient } = require('mongodb');
 
 const app = express();
-
-
-
-let cors = require("cors");
-
-
-
 const port = 8000;
 
 app.use(express.json());
+const lista_blanca = ["http://localhost:5500", "http://localhost:8000/mediciones", "http://127.0.0.1:5500"];
+app.use(cors({ origin: lista_blanca }));
+
+// Conexión a MongoDB
+const uri = process.env.MONGO_URI;
+let collection;
+
+// Leer el intervalo desde el archivo .env
+const saveInterval = parseInt(process.env.SAVE_INTERVAL, 10) || 60000; // Valor por defecto de 60s
 
 
-const mediciones = [{
-    "id": 1,
-    "valor_temp": 32.4,
-    "valor_volt": 230,
-    "valor_corriente": 143,
-    "valor_luz": true
-},
-{
-    "id": 2,
+MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(client => {
+        console.log("Conectado a MongoDB");
+        const db = client.db("medicionesDB");
+        collection = db.collection("mediciones");
+    })
+    .catch(err => console.error("Error conectando a MongoDB:", err));
 
-    "valor_temp": 22.1,
-    "valor_volt": 219.2,
-    "valor_corriente": 35,
-    "valor_luz": false
-},
-{
-    "id": 3,
-    "valor_temp": 67.8,
-    "valor_volt": 231.0,
-    "valor_corriente": 8,
-    "valor_luz": true
-}
-]
-
-
-const lista_blanca = ["http://localhost:5500", "http://localhost:8000/mediciones"]
-app.use(cors(
-    {
-        origin: lista_blanca
-    }
-));
-
-app.get('/mediciones', (request, response) => {
-    response.json(mediciones);
-});
-
-
-
-app.get('/temp', (req, res) => {
-    let temp_alea = Math.random().toFixed(2) * 50;
-    res.json({ "message": temp_alea })
-});
-
-app.get('/volt', (req, res) => {
-    let volt_alea = Math.random().toFixed(2) * 230;
-
-    res.json({ "message": volt_alea })
-});
-
-app.get('/corri', (req, res) => {
-    let corri_alea = Math.random().toFixed(2) * 70;
-
-    res.json({ "message": corri_alea })
-});
-
-
-app.post('/medicion', (request, response) => {
-    const medicion = request.body;
-    mediciones.push(medicion);
-    response.json({ "registro cargado ": medicion.id });
-    console.log(medicion);
-});
-
-
-
-app.put('/medicion/:id', (request, response) => {
-    const id = request.params.id;
-    const indice = mediciones.findIndex(dato => dato.id == id);
-    if (indice) {
-        const datos_body = request.body;
-        mediciones[indice].valor_corriente = datos_body.valor_corriente
-        mediciones[indice].valor_temp = datos_body.valor_temp
-        mediciones[indice].valor_volt = datos_body.valor_volt
-        mediciones[indice].valor_luz = datos_body.valor_luz
-        response.json({ "mensaje": "la id que se modificó es " + id })
-    }
-    else {
-        response.status(404).json({ error: "Id no encontrada" });
+// Endpoint para obtener la última medición de temperatura
+app.get('/ultima-temperatura', async (req, res) => {
+    try {
+        const ultimaMedicion = await collection.find().sort({ _id: -1 }).limit(1).toArray();
+        if (ultimaMedicion.length > 0) {
+            res.json({ message: ultimaMedicion[0].valor_temp });
+        } else {
+            res.json({ error: "No hay datos disponibles" });
+        }
+    } catch (err) {
+        res.status(500).json({ error: "Error al obtener la última temperatura" });
     }
 });
 
 
-
-app.delete('/delete/:id', (request, response) => {
-    JavaScript
-    const { id } = request.params;
-    mediciones.pop(id)
-    response.json({ "elemento eliminado": id })
-    console.log("DELETE: ", id)
+// Endpoint para obtener la última medición de tensión
+app.get('/ultima-tension', async (req, res) => {
+    try {
+        const ultimaMedicion = await collection.find().sort({ _id: -1 }).limit(1).toArray();
+        if (ultimaMedicion.length > 0) {
+            res.json({ message: ultimaMedicion[0].valor_volt });
+        } else {
+            res.json({ error: "No hay datos disponibles" });
+        }
+    } catch (err) {
+        res.status(500).json({ error: "Error al obtener la última tensión" });
+    }
 });
 
+
+// Endpoint para obtener la última medición de corriente
+app.get('/ultima-corriente', async (req, res) => {
+    try {
+        const ultimaMedicion = await collection.find().sort({ _id: -1 }).limit(1).toArray();
+        if (ultimaMedicion.length > 0) {
+            res.json({ message: ultimaMedicion[0].valor_corriente });
+        } else {
+            res.json({ error: "No hay datos disponibles" });
+        }
+    } catch (err) {
+        res.status(500).json({ error: "Error al obtener la última corriente" });
+    }
+});
+
+// Insertar datos cada 15 segundos
+setInterval(async () => {
+    const nuevaMedicion = {
+        valor_temp: (Math.random() * 50).toFixed(2),
+        valor_volt: (Math.random() * 230).toFixed(2),
+        valor_corriente: (Math.random() * 70).toFixed(2),
+        valor_luz: Math.random() > 0.5,
+        timestamp: new Date()
+    };
+    try {
+        await collection.insertOne(nuevaMedicion);
+        console.log("Medición guardada:", nuevaMedicion);
+    } catch (err) {
+        console.error("Error al guardar medición:", err);
+    }
+}, saveInterval);
+
+// Otros endpoints de ejemplo
+app.get('/mediciones', async (req, res) => {
+    try {
+        const datos = await collection.find().toArray();
+        res.json(datos);
+    } catch (err) {
+        res.status(500).json({ error: "Error al obtener las mediciones" });
+    }
+});
 
 app.listen(port, () => {
-    console.log('Servidor escuchando en el puerto :', port);
-}); 
+    console.log('Servidor escuchando en el puerto:', port);
+});
