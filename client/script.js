@@ -2,6 +2,17 @@ const tempButton = document.getElementById("bt_temp");
 const voltButton = document.getElementById("bt_volt");
 const medicionesButton = document.getElementById("bt_corri");
 
+
+
+// Función para mostrar la hora y fecha
+function mostrarFechaHora() {
+    const timestamp = document.getElementById("timestamp");
+    const ahora = new Date();
+    const fechaHora = `${ahora.toLocaleDateString()} ${ahora.toLocaleTimeString()}`;
+    timestamp.textContent = `Última acción: ${fechaHora}`;
+}
+
+
 // Función para obtener la temperatura
 function obtener_temperatura() {
     fetch('http://localhost:8000/ultima-temperatura')
@@ -17,7 +28,8 @@ function obtener_temperatura() {
         .catch(error => {
             console.error("Error al obtener la temperatura:", error);
             document.getElementById("dato1").textContent = "No se pudo obtener la temperatura";
-        });
+        })
+        .finally(mostrarFechaHora); // Llamar a mostrarFechaHora
 }
 
 // Función para obtener el voltaje
@@ -35,7 +47,8 @@ function obtener_voltaje() {
         .catch(error => {
             console.error("Error al obtener el voltaje:", error);
             document.getElementById("dato2").textContent = "No se pudo obtener el voltaje";
-        });
+        })
+        .finally(mostrarFechaHora); // Llamar a mostrarFechaHora
 }
 
 // Función para obtener las corriente
@@ -53,7 +66,8 @@ function obtener_corriente() {
         .catch(error => {
             console.error("Error al obtener el corriente:", error);
             document.getElementById("dato3").textContent = "No se pudo obtener el corriente";
-        });
+        })
+        .finally(mostrarFechaHora); // Llamar a mostrarFechaHora
 }
 
 // Asignar los eventos a los botones
